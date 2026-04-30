@@ -131,6 +131,22 @@ func TestIsImageFileValidExtensionMissing(t *testing.T) {
 	}
 }
 
+func TestIsImageFileJpegExtension(t *testing.T) {
+	p, _ := NewParser(ParserConfig{DisableNetwork: true})
+	u := url.URL{Scheme: "file", Path: "/nonexistent/test.jpeg"}
+	ok, err := p.isImageFile(u, false)
+	if ok {
+		t.Error("expected false for nonexistent file")
+	}
+	// err should be about missing file, not invalid extension
+	if err == nil {
+		t.Error("expected error for nonexistent file")
+	}
+	if strings.Contains(err.Error(), "invalid file extension") {
+		t.Errorf("unexpected 'invalid file extension' error for .jpeg: %s", err.Error())
+	}
+}
+
 func TestValidLogoInvalidExtension(t *testing.T) {
 	p, _ := NewParser(ParserConfig{DisableNetwork: true})
 	u := url.URL{Scheme: "file", Path: "/tmp/test.gif"}
